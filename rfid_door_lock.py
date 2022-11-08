@@ -5,18 +5,22 @@ import sys
 import requests
 import time
 
+# Define the IP Address endpoint of your REST API Endpoints
 API_URL = 'http://192.168.100.22:5000/api/students'
 
+# Define PIN assignments
 RED_LED_PIN = 11
 GREEN_LED_PIN = 13
 BUZZER_PIN = 37
 RELAY_PIN = 31
 
+# Define variables for use in the program
 is_reading = True
 current_rfid = None
+# Define our RFID Reader
 reader = None
 
-# Capture SIGINT for cleanup
+''' Cleanup function when the program is terminated '''
 def end_read(signal, frame):
     global is_reading
     print('Cleaning up GPIO before exiting...')
@@ -25,10 +29,10 @@ def end_read(signal, frame):
     sys.exit()
 
 
-# Hook the SIGINT
+''' Hook the SIGINT'''
 signal.signal(signal.SIGINT, end_read)
 
-
+''' Function to call the REST API function and validate the RFID Badge '''
 def get_rfid_info(rfid_badge_number):
     query_params = {
         "rfId": rfid_badge_number.strip()
@@ -37,7 +41,7 @@ def get_rfid_info(rfid_badge_number):
 
     return response.json()
 
-
+''' Initialize our pins and rfid reader '''
 def setup():
     global reader
     GPIO.setmode(GPIO.BOARD)
@@ -49,13 +53,13 @@ def setup():
 
     reader = SimpleMFRC522()
 
-
+''' Clear the LED and Buzzer '''
 def clear_outputs():
     GPIO.output(RED_LED_PIN, GPIO.LOW)
     GPIO.output(GREEN_LED_PIN, GPIO.LOW)
     GPIO.output(BUZZER_PIN, GPIO.LOW)
 
-
+'''If RFID is invalid then the Red LED and Buzzer is turned on'''
 def show_invalid_rfid():
     clear_outputs()
     GPIO.output(RED_LED_PIN, GPIO.HIGH)
@@ -63,21 +67,21 @@ def show_invalid_rfid():
     time.sleep(1.0)
     clear_outputs()
 
-
+'''If RFID is valid then the Green LED and Solenoid Lock is turned on'''
 def show_valid_rfid():
     clear_outputs()
     GPIO.output(GREEN_LED_PIN, GPIO.HIGH)
     open_lock()
     clear_outputs()
 
-
+'''Unlock the door lock and close after 3 seconds'''
 def open_lock():
     print("Opening door lock...")
     GPIO.output(RELAY_PIN, GPIO.HIGH)
     time.sleep(3)
     GPIO.output(RELAY_PIN, GPIO.LOW)
 
-
+'''Our main entry function that calls the setup() method and periodically scan for RFID'''
 def main():
     global reader, current_rfid
     setup()
@@ -98,5 +102,6 @@ def main():
                 show_invalid_rfid()
 
 
+# Main entry Point
 if __name__ == '__main__':
     main()
