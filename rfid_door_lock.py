@@ -84,10 +84,7 @@ def main():
 
     print("Please scan your RFID(s)...")
     while is_reading:
-        print("Here in looping...")
         _, text = reader.read()
-        print("Blocking operation...")
-        print(f"Text :: {text}")
         if text == current_rfid:
             time.sleep(1)
             current_rfid = None
