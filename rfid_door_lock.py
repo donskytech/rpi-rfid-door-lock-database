@@ -5,6 +5,7 @@ import sys
 import requests
 import time
 
+# IMPORTANT - CHANGE THIS!!!!!
 # Define the IP Address endpoint of your REST API Endpoints
 API_URL = 'http://192.168.100.22:5000/api/students'
 
