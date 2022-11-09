@@ -51,7 +51,7 @@ def setup():
     GPIO.setup(RED_LED_PIN, GPIO.OUT)
     GPIO.setup(GREEN_LED_PIN, GPIO.OUT)
     GPIO.setup(BUZZER_PIN, GPIO.OUT)
-    GPIO.setup(RELAY_PIN, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(RELAY_PIN, GPIO.OUT, initial=GPIO.HIGH)
 
     reader = SimpleMFRC522()
 
@@ -83,9 +83,9 @@ def show_valid_rfid():
 '''Unlock the door lock and close after 3 seconds'''
 def open_lock():
     print("Opening door lock...")
-    GPIO.output(RELAY_PIN, GPIO.HIGH)
-    time.sleep(3)
     GPIO.output(RELAY_PIN, GPIO.LOW)
+    time.sleep(3)
+    GPIO.output(RELAY_PIN, GPIO.HIGH)
 
 
 '''Our main entry function that calls the setup() method and periodically scans for RFID'''
